@@ -9,9 +9,6 @@ It talks to Telegram over the **MTProto user API** via
 direct messages. (A Bot-API bot cannot read your personal chats or message
 arbitrary people — that's why this uses a user session, not a bot token.)
 
-> Replace `YOUR_GITHUB_USERNAME` in `pyproject.toml` and in the clone command
-> below with your actual GitHub handle before publishing.
-
 ## Features
 
 | Tool | What it does |
@@ -51,7 +48,7 @@ returns raw messages.
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/telegram-mcp
+git clone https://github.com/DmitryKhali/telegram-mcp
 cd telegram-mcp
 uv sync
 ```

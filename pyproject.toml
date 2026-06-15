@@ -18,10 +18,9 @@ dependencies = [
 telegram-mcp = "telegram_mcp.server:main"
 telegram-mcp-login = "telegram_mcp.login:main"
 
-# NOTE: replace YOUR_GITHUB_USERNAME below before publishing.
 [project.urls]
-Homepage = "https://github.com/YOUR_GITHUB_USERNAME/telegram-mcp"
-Issues = "https://github.com/YOUR_GITHUB_USERNAME/telegram-mcp/issues"
+Homepage = "https://github.com/DmitryKhali/telegram-mcp"
+Issues = "https://github.com/DmitryKhali/telegram-mcp/issues"
 
 [build-system]
 requires = ["hatchling"]
