@@ -18,6 +18,7 @@ arbitrary people — that's why this uses a user session, not a bot token.)
 | `search_messages` | Search messages globally or within one chat |
 | `get_chat_info` | Metadata about a chat or user |
 | `send_message` | Send a message — **requires `confirm=true`**, returns a preview otherwise |
+| `send_file` | Send a local file (document/photo/video), optionally with a caption — **requires `confirm=true`** |
 
 Summaries are produced by the LLM client, **not** the server — the server only
 returns raw messages.
@@ -30,8 +31,8 @@ returns raw messages.
   the repo, an `.env`, or the MCP config file.
 - The login session grants full access to your account — treat it like a
   password. Anyone with it can act as you on Telegram.
-- `send_message` will not send anything without `confirm=true`, so the model
-  always shows you a preview first.
+- `send_message` and `send_file` will not send anything without `confirm=true`,
+  so the model always shows you a preview — recipient included — first.
 
 ---
 
@@ -130,6 +131,8 @@ Ask Claude things like:
 - "What's new in the 'Team' group?" (it can read archived chats too)
 - "Draft a message to @bob saying I'll be 10 minutes late." — Claude shows a
   preview; you confirm before it sends.
+- "Send ~/reports/q3.pdf to the 'Team' group with a short caption." — same
+  preview-then-confirm flow.
 
 ---
 
@@ -169,11 +172,43 @@ many retries. Fixes:
 
 - **Enable a VPN** so the traffic is tunneled, then retry. This is the simplest
   reliable fix.
+- **Point the server at a SOCKS5 proxy** — see below. Useful when you'd rather
+  not route the whole machine through a VPN.
 - The client already retries connecting several times, so a flaky connection
   often gets through eventually.
-- For a built-in proxy instead of a system VPN, Telethon supports SOCKS5 and
-  MTProxy via the `proxy=` argument in `build_client()` (see
-  `src/telegram_mcp/client.py`).
+
+### Using a SOCKS5 proxy
+
+Set `SOCKS5_PROXY` to `host:port` (or a full `socks5://` URL, with
+`user:pass@` if the proxy needs auth). In an MCP config, put it in `env`:
+
+```json
+{
+  "mcpServers": {
+    "telegram": {
+      "command": "uv",
+      "args": ["--directory", "/absolute/path/to/telegram-mcp", "run", "telegram-mcp"],
+      "env": { "SOCKS5_PROXY": "127.0.0.1:1080" }
+    }
+  }
+}
+```
+
+For `telegram-mcp-login`, export it in the shell first:
+
+```bash
+SOCKS5_PROXY=127.0.0.1:1080 uv run telegram-mcp-login
+```
+
+The standard `all_proxy` / `ALL_PROXY` variables are honoured too, but **only**
+when they hold a `socks5://` (or `socks5h://`) URL — an HTTP or SOCKS4 value
+there is ignored rather than misapplied, since Telethon can't use it for
+MTProto. `SOCKS5_PROXY` wins if both are set.
+
+Note that the proxy has to be reachable *before* the server starts making
+calls: if the tools fail with "Connection to Telegram failed N time(s)", check
+that the proxy process is actually running — a configured-but-dead proxy looks
+exactly like a blocked network.
 
 ### "Telegram session is not authorized"
 

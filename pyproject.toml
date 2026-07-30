@@ -12,6 +12,9 @@ dependencies = [
     "telethon>=1.36",
     "keyring>=25.0",
     "qrcode>=7.4",
+    # Telethon imports this lazily for SOCKS5 support; without it a configured
+    # proxy fails at connect time instead of at startup.
+    "python-socks[asyncio]>=2.0",
 ]
 
 [project.scripts]
