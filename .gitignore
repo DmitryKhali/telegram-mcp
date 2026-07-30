@@ -26,3 +26,6 @@ venv/
 
 # Local Claude Code settings
 .claude/
+
+# Personal context (names, chat styles, ids) — not for public repo
+TELEGRAM_CONTEXT.md

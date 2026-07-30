@@ -249,6 +249,60 @@ async def send_message(chat: str | int, text: str, confirm: bool = False) -> dic
     }
 
 
+@mcp.tool()
+async def send_file(
+    chat: str | int,
+    file_path: str,
+    caption: str = "",
+    confirm: bool = False,
+) -> dict:
+    """Send a local file (document/photo/video) to a chat or user.
+
+    SAFETY: With confirm=false (default) this does NOT send — it resolves the
+    recipient and returns a preview. Only call again with confirm=true after the
+    user has approved the exact recipient and file.
+
+    Args:
+        chat: Chat id (int), @username, or phone number.
+        file_path: Absolute path to the local file to send.
+        caption: Optional caption text to attach to the file.
+        confirm: Must be true to actually send.
+    """
+    import os
+
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"No such file: {file_path}")
+
+    client = await get_client()
+    entity = await client.get_entity(_normalize_chat(chat))
+    recipient = {
+        "id": entity.id,
+        "name": _entity_name(entity),
+        "type": _entity_type(entity),
+        "username": getattr(entity, "username", None),
+    }
+
+    if not confirm:
+        return {
+            "sent": False,
+            "preview": True,
+            "recipient": recipient,
+            "file_path": file_path,
+            "caption": caption,
+            "note": "Not sent. Re-call with confirm=true to send this file.",
+        }
+
+    sent = await client.send_file(entity, file_path, caption=caption or None)
+    return {
+        "sent": True,
+        "recipient": recipient,
+        "message_id": sent.id,
+        "date": _iso(sent.date),
+        "file_path": file_path,
+        "caption": caption,
+    }
+
+
 def main() -> None:
     # Fail fast with a clear message if credentials are missing.
     try:
