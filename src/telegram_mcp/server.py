@@ -1,8 +1,8 @@
 """Telegram MCP server.
 
-Exposes a small set of tools over MCP so an LLM client (Claude Desktop /
-Claude Code) can read your Telegram chats and, with explicit confirmation,
-send messages from your own account.
+Exposes a small set of tools over MCP so any MCP-capable LLM client can read
+your Telegram chats and, with explicit confirmation, send messages from your
+own account.
 
 Design notes:
 - Summaries are NOT produced here. Tools return raw messages; the LLM client

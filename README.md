@@ -1,8 +1,13 @@
 # telegram-mcp
 
-An [MCP](https://modelcontextprotocol.io) server for Telegram. It lets an LLM
-client (Claude Desktop / Claude Code) read your Telegram chats, summarize them,
-and — with explicit confirmation — send messages **from your own account**.
+An [MCP](https://modelcontextprotocol.io) server for Telegram. It lets an
+MCP-capable LLM client read your Telegram chats, summarize them, and — with
+explicit confirmation — send messages **from your own account**.
+
+It's a plain stdio MCP server with no vendor-specific bits, so any client that
+speaks the protocol works: Claude Desktop, Claude Code, Cursor, Zed, Cline,
+Continue, custom agents built on an MCP SDK, and so on. Setup examples below
+use Claude, but the command is the same everywhere.
 
 It talks to Telegram over the **MTProto user API** via
 [Telethon](https://docs.telethon.dev), so it can access your real dialogs and
@@ -87,7 +92,13 @@ If you have two-step verification, you'll be prompted for that cloud password
 too (you get a few attempts). On success the session is saved to the keyring
 and you're done — the server connects automatically from now on.
 
-### 5. Connect to Claude
+### 5. Connect your MCP client
+
+However your client is configured, it needs to launch this one command:
+
+```
+uv --directory /absolute/path/to/telegram-mcp run telegram-mcp
+```
 
 **Claude Desktop** — edit the config file:
 
@@ -121,15 +132,21 @@ claude mcp add telegram -s user -- uv --directory /absolute/path/to/telegram-mcp
 
 Check it connected with `claude mcp list` (look for `telegram: ... ✓ Connected`).
 
+**Any other MCP client** (Cursor, Zed, Cline, Continue, LibreChat, your own
+agent…) — point it at the same stdio command. Most of them use the same
+`mcpServers` JSON shape as Claude Desktop above; consult your client's docs for
+where that config file lives. The `env` block for a proxy (see
+[Using a SOCKS5 proxy](#using-a-socks5-proxy)) works the same way.
+
 ---
 
 ## Usage
 
-Ask Claude things like:
+Ask your assistant things like:
 
 - "Summarize my chat with Alice from the last day."
 - "What's new in the 'Team' group?" (it can read archived chats too)
-- "Draft a message to @bob saying I'll be 10 minutes late." — Claude shows a
+- "Draft a message to @bob saying I'll be 10 minutes late." — you get a
   preview; you confirm before it sends.
 - "Send ~/reports/q3.pdf to the 'Team' group with a short caption." — same
   preview-then-confirm flow.
