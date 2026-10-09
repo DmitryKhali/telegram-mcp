@@ -19,8 +19,9 @@ arbitrary people — that's why this uses a user session, not a bot token.)
 | Tool | What it does |
 |------|--------------|
 | `list_dialogs` | List your chats (and archived chats) to find one by name/id |
-| `get_messages` | Fetch recent messages from a chat (for summarizing/review) |
-| `search_messages` | Search messages globally or within one chat |
+| `get_messages` | Fetch recent messages from a chat (for summarizing/review), with reactions |
+| `search_messages` | Search messages globally or within one chat, with reactions |
+| `get_message_reactions` | Who reacted to a message and with what (private chats and groups, not channels) |
 | `get_chat_info` | Metadata about a chat or user |
 | `send_message` | Send a message — **requires `confirm=true`**, returns a preview otherwise |
 | `send_file` | Send a local file (document/photo/video), optionally with a caption — **requires `confirm=true`** |
